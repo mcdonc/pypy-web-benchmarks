@@ -1,7 +1,5 @@
-import sys
 import cyclone.web
 import cyclone.redis
-from twisted.python import log
 from twisted.internet import reactor
 from twisted.internet import defer
 

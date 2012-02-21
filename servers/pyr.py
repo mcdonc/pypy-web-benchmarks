@@ -1,5 +1,4 @@
 import sys
-from wsgiref.simple_server import make_server
 from pyramid.config import Configurator
 from pyramid.response import Response
 from tornado.wsgi import WSGIContainer
@@ -37,6 +36,7 @@ if __name__ == '__main__':
         http_server = HTTPServer(WSGIContainer(app))
         http_server.listen(8000)
         IOLoop.instance().start()
+
     else:
         raise Exception('wat')
 

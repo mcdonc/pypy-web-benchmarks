@@ -10,6 +10,11 @@ import csv
 import subprocess
 import time
 import re
+import redis
+
+redisdb = redis.ConnectionPool(host='localhost')
+db = redis.Redis(connection_pool=redisdb)
+db.set('page', 'a' * 2000)
 
 GETS = 10000
 concurrencies = [(4 ** x) for x in (1,2,3,4)]
@@ -19,18 +24,13 @@ is_pypy = hasattr(sys, 'pypy_version_info')
 gevent = [] if is_pypy else ['gevent']
 
 def servers():
-    yield 'cyclone', 'cyclone', subprocess.Popen('python servers/cyc.py'.split())
-    yield 'tornado', 'tornado', subprocess.Popen('python servers/torn.py'.split())
+    #yield 'cyclone', 'cyclone', subprocess.Popen('python servers/cyc.py'.split())
+    #yield 'tornado', 'tornado', subprocess.Popen('python servers/torn.py'.split())
 	
-
-    for host in gevent + ['twisted', 'tornado', 'paste', 'rocket']: #excluded wsgiref twisted
+    for host in gevent + ['tornado', ]:#'paste']: #excluded wsgiref twisted
+        yield 'pyramid', host, subprocess.Popen(('python servers/pyr.py %s' % host).split())
         yield 'bottle', host, subprocess.Popen(('python servers/bot.py %s' % host).split())
-
-    for host in gevent + ['tornado']:
         yield 'flask', host, subprocess.Popen(('python servers/fla.py %s' % host).split())
-	yield 'pyramid', host, subprocess.Popen(('python servers/pyr.py %s' % host).split())
-
-
 
 def metrics(result):
     mets = {}

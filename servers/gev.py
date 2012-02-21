@@ -7,5 +7,6 @@ class WebServer(object):
 
 if __name__ == "__main__":
     app = WebServer()
-    wsgi.WSGIServer(('', 8000), app.application, backlog=1024, log=None).serve_forever()
+    wsgi.WSGIServer(('', 8000), 
+                    app.application, backlog=1024, log=None).serve_forever()
 

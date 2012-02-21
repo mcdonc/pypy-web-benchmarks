@@ -1,11 +1,11 @@
 import sys
-from bottle import route, run
+from bottle import run
 import bottle
-from bottle_redis import RedisPlugin
+import redis
 
 app = bottle.Bottle()
-plugin = RedisPlugin(host='localhost')
-app.install(plugin)
+
+redisdb = redis.ConnectionPool(host='localhost')
 
 if len(sys.argv) < 2:
     server = 'tornado'
@@ -14,9 +14,10 @@ else:
 
 
 @app.route('/')
-def stream(rdb):
-    x = rdb.incr('counter')
-    p = rdb.get('page')
+def stream():
+    db = redis.Redis(connection_pool=redisdb)
+    x = db.incr('counter')
+    p = db.get('page')
     yield 'hello world! %s\n' % x
     yield p
 
